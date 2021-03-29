@@ -1,5 +1,9 @@
-function nextHealthy(knights, startIndex) {
-  
+function nextHealthy(knights, searchIndex) {
+  const shouldIRestart = knights.length - 1 < searchIndex;
+  const actualIndex = shouldIRestart ? 0 : searchIndex;
+  const currentKnight = knights[actualIndex];
+  if (currentKnight.life > 0) return currentKnight;
+  return nextHealthy(knights, searchIndex + 1);
 }
 
 const knights = [
@@ -27,19 +31,21 @@ while (stillAFight) {
     const currentHitPoints =
       hitPoints[Math.floor(Math.random() * hitPoints.length)];
 
-    const nextIndex = !knights[i + 1] ? 0 : i + 1;
-    const nextKnight = knights[nextIndex];
+    const nextKnight = nextHealthy(knights, i + 1);
+    const indexOfNext = knights.indexOf(nextKnight);
     
     if (nextKnight && nextKnight.life > 0) {
       const remainingLife = nextKnight.life - currentHitPoints;
-      knights[nextIndex].life = remainingLife;
+      knights[indexOfNext].life = remainingLife;
       console.log(
         knight.name,
         " hits ",
         nextKnight && nextKnight.name,
         " by ",
         currentHitPoints,
-        " damage points."
+        " damage points.",
+        "remaining life: ",
+        remainingLife
       );
       if (remainingLife <= 0) {
         console.log(nextKnight.name, "dies");
