@@ -1,22 +1,29 @@
-const knights = require("./src/adapter/knights");
+const knightsAdapter = require("./src/adapter/knights");
 const service = require("./src/service");
 
 console.log("Starts here");
 
+const knights = knightsAdapter;
+
+function updateRemainingLife(knightIndex, { remainingLife }) {
+  knights[knightIndex].life = remainingLife;
+}
+
+function fight(rival, updateFightResults = (_) => {}) {
+  const rivalIndex = knights.indexOf(rival);
+  const fightResults = service.doDamage(rival);
+  updateFightResults(rivalIndex, fightResults);
+  return fightResults;
+}
+
 while (!service.hasOnlyOneSurvivor(knights)) {
-  for (let knightIndex = 0; knightIndex < knights.length; knightIndex++) {
-    const knight = knights[knightIndex];
+  for (let index = 0; index < knights.length; index++) {
+    const knight = knights[index];
     if (!service.isHealthy(knight)) {
       continue;
     }
-    const rival = service.nextHealthyKnight(knights, knightIndex + 1);
-    if (!service.isHealthy(rival)) {
-      continue;
-    }
-    const indexOfNext = knights.indexOf(rival);
-    const [hitPoints, remainingLife] = service.doDamage(rival);
-    knights[indexOfNext].life = remainingLife;
-    console.log('Remaining', remainingLife)
+    const rival = service.nextHealthy(knights, index + 1);
+    const { hitPoints, remainingLife } = fight(rival, updateRemainingLife);
     console.log(`${knight.name} hits ${rival.name} by ${hitPoints}`);
     if (remainingLife <= 0) {
       console.log(rival.name, "dies");
