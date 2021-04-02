@@ -8,21 +8,18 @@ function isHealthy(knight) {
   return knight.life > 0;
 }
 
-function nextHealthyKnight(knights, searchIndex) {
-  const shouldIRestart = knights.length === (searchIndex + 1);
+function nextHealthy(knights, searchIndex) {
+  const shouldIRestart = knights.length < (searchIndex + 1);
   const actualIndex = shouldIRestart ? 0 : searchIndex;
-  console.log('Should I Restart?', shouldIRestart, searchIndex, knights.length, 'Actual index', actualIndex)
   const currentKnight = knights[actualIndex];
-  console.log('Current', currentKnight)
   if (currentKnight && isHealthy(currentKnight)) return currentKnight;
-  console.log('Searching next', searchIndex)
-  return nextHealthyKnight(knights, actualIndex + 1);
+  return nextHealthy(knights, actualIndex + 1);
 }
 
 function doDamage(rival) {
   const hitPoints = randomizeHitPoints();
   const remainingLife = rival.life - hitPoints;
-  return [hitPoints, remainingLife];
+  return { hitPoints, remainingLife };
 }
 
 function hasOnlyOneSurvivor(knights) {
@@ -36,7 +33,7 @@ function findWinner(knights) {
 
 const knightService = {
   isHealthy,
-  nextHealthyKnight,
+  nextHealthy,
   doDamage,
   hasOnlyOneSurvivor,
   findWinner
