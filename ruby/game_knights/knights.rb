@@ -2,7 +2,7 @@ require './game_knights/knight'
 
 module GameOfKnights
   class Knights
-    attr_reader :database
+    attr_accessor :database
 
     def initialize
       @database = [
@@ -20,11 +20,9 @@ module GameOfKnights
     end
 
     def fight(knight_a, knight_b)
-      b_index = @database.index(knight_b)
-
       hitpoints = random_hitpoint
 
-      @database[b_index].life = knight_b.life - hitpoints
+      update_life_points(knight_b, hitpoints)
 
       puts "Fighter #{knight_a.name} hits #{knight_b.name} with #{hitpoints} points."
       puts "#{knight_b.name} still has #{knight_b.life} life points."
@@ -52,6 +50,18 @@ module GameOfKnights
 
     def winner
       @database.find { |knight| knight.life.positive? }
+    end
+
+    private
+
+    def update_life_points(knight, damage)
+      @database = @database.map do |current|
+        if current.name == knight.name
+          Knight.new(current.name, current.life - damage)
+        else
+          current
+        end
+      end
     end
   end
 end

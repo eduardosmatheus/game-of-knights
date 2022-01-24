@@ -1,4 +1,5 @@
 require './game_knights/game_knights'
+
 class Main
   attr_accessor :knights
 
